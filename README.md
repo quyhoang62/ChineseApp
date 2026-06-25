@@ -1,6 +1,7 @@
 # Hoc Tieng Trung
 
 Ung dung hoc tu vung tieng Trung theo kien truc tach rieng frontend va backend:
+
 - Frontend: React Native + Expo
 - Backend: Node.js + Express + MySQL
 
@@ -23,12 +24,14 @@ Backend (Express)
 ## Cong nghe su dung
 
 ### Frontend
+
 - Expo SDK 54
 - React Native
 - React Navigation (Bottom Tabs)
 - Context API + useReducer
 
 ### Backend
+
 - Node.js
 - Express
 - mysql2

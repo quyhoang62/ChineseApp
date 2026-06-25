@@ -15,7 +15,7 @@ function mapRow(row) {
 
 async function listWords(req, res) {
   const [rows] = await pool.query(
-    "SELECT id, hanzi, pinyin, meaning, lesson, example, note, learned FROM words ORDER BY id DESC"
+    "SELECT id, hanzi, pinyin, meaning, lesson, example, note, learned FROM words ORDER BY id DESC",
   );
   res.json(rows.map(mapRow));
 }
@@ -36,12 +36,19 @@ async function createWord(req, res) {
 
   const [result] = await pool.query(
     "INSERT INTO words (hanzi, pinyin, meaning, lesson, example, note, learned) VALUES (?, ?, ?, ?, ?, ?, 0)",
-    [hanzi.trim(), pinyin.trim(), meaning.trim(), lesson.trim(), example.trim(), note.trim()]
+    [
+      hanzi.trim(),
+      pinyin.trim(),
+      meaning.trim(),
+      lesson.trim(),
+      example.trim(),
+      note.trim(),
+    ],
   );
 
   const [rows] = await pool.query(
     "SELECT id, hanzi, pinyin, meaning, lesson, example, note, learned FROM words WHERE id = ?",
-    [result.insertId]
+    [result.insertId],
   );
 
   res.status(201).json(mapRow(rows[0]));
@@ -55,7 +62,10 @@ async function updateLearned(req, res) {
     return res.status(400).json({ message: "learned phai la boolean" });
   }
 
-  const [result] = await pool.query("UPDATE words SET learned = ? WHERE id = ?", [learned ? 1 : 0, id]);
+  const [result] = await pool.query(
+    "UPDATE words SET learned = ? WHERE id = ?",
+    [learned ? 1 : 0, id],
+  );
 
   if (!result.affectedRows) {
     return res.status(404).json({ message: "Khong tim thay tu vung" });
@@ -63,7 +73,7 @@ async function updateLearned(req, res) {
 
   const [rows] = await pool.query(
     "SELECT id, hanzi, pinyin, meaning, lesson, example, note, learned FROM words WHERE id = ?",
-    [id]
+    [id],
   );
 
   res.json(mapRow(rows[0]));
