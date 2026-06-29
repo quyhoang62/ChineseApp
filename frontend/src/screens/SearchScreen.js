@@ -17,6 +17,47 @@ function normalize(value) {
   return value.trim().toLowerCase();
 }
 
+function getLessonNumber(value) {
+  const match = String(value || "").match(/lesson\s*0*(\d+)/i);
+  return match ? Number(match[1]) : null;
+}
+
+function getMatchScore(word, query) {
+  const normalizedLesson = normalize(word.lesson || "");
+  const lessonNumberFromQuery = getLessonNumber(query);
+  const lessonNumberFromWord = getLessonNumber(normalizedLesson);
+
+  // Highest priority: exact lesson number, e.g. lesson1 -> Lesson01.
+  if (
+    lessonNumberFromQuery !== null &&
+    lessonNumberFromWord !== null &&
+    lessonNumberFromQuery === lessonNumberFromWord
+  ) {
+    return 0;
+  }
+
+  const fields = [
+    normalize(word.hanzi || ""),
+    normalize(word.pinyin || ""),
+    normalize(word.meaning || ""),
+    normalizedLesson,
+  ];
+
+  if (fields.some((field) => field === query)) {
+    return 1;
+  }
+
+  if (fields.some((field) => field.startsWith(query))) {
+    return 2;
+  }
+
+  if (fields.some((field) => field.includes(query))) {
+    return 3;
+  }
+
+  return Number.POSITIVE_INFINITY;
+}
+
 export function SearchScreen() {
   const { words, toggleLearned, deleteWord } = useVocabulary();
   const [query, setQuery] = useState("");
@@ -28,12 +69,21 @@ export function SearchScreen() {
       return words;
     }
 
-    return words.filter((word) => {
-      const searchable = [word.hanzi, word.pinyin, word.meaning, word.lesson]
-        .join(" ")
-        .toLowerCase();
-      return searchable.includes(q);
-    });
+    return words
+      .map((word) => ({
+        word,
+        score: getMatchScore(word, q),
+      }))
+      .filter((item) => Number.isFinite(item.score))
+      .sort((a, b) => {
+        if (a.score !== b.score) {
+          return a.score - b.score;
+        }
+
+        // Keep deterministic order for same score: newest id first.
+        return Number(b.word.id) - Number(a.word.id);
+      })
+      .map((item) => item.word);
   }, [query, words]);
 
   const confirmDelete = (word) => {
