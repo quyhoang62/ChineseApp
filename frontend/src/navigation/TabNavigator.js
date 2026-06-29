@@ -8,11 +8,11 @@ import { COLORS } from "../constants/theme";
 const Tab = createBottomTabNavigator();
 
 function getTabIcon(routeName, focused) {
-  if (routeName === "Học từ") {
+  if (routeName === "Học từ vựng") {
     return focused ? "school" : "school-outline";
   }
 
-  if (routeName === "Thêm từ") {
+  if (routeName === "Thêm từ mới") {
     return focused ? "add-circle" : "add-circle-outline";
   }
 
@@ -55,14 +55,14 @@ export function TabNavigator() {
       })}
     >
       <Tab.Screen
-        name="Học từ"
+        name="Học từ vựng"
         component={LearnScreen}
         options={{
           title: "Học từ vựng",
         }}
       />
       <Tab.Screen
-        name="Thêm từ"
+        name="Thêm từ mới"
         component={AddWordScreen}
         options={{
           title: "Thêm từ mới",

@@ -2,7 +2,7 @@ import { Platform } from "react-native";
 
 // IP LAN của máy tính đang chạy backend.
 // Thay đổi khi đổi mạng Wi-Fi.
-const LAN_IP = "192.168.1.15";
+const LAN_IP = "192.168.1.18";
 
 // Android emulator dùng 10.0.2.2, web dùng localhost, thiết bị thật dùng IP LAN.
 const HOST =

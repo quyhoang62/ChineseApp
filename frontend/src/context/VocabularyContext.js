@@ -33,22 +33,6 @@ function vocabularyReducer(state, action) {
         ...state,
         words: state.words.filter((word) => word.id !== action.payload),
       };
-    case "TOGGLE_LEARNED":
-      return {
-        ...state,
-        words: state.words.map((word) =>
-          word.id === action.payload
-            ? { ...word, learned: !word.learned }
-            : word,
-        ),
-      };
-    case "MARK_LEARNED":
-      return {
-        ...state,
-        words: state.words.map((word) =>
-          word.id === action.payload ? { ...word, learned: true } : word,
-        ),
-      };
     case "UPDATE_WORD":
       return {
         ...state,
@@ -88,25 +72,35 @@ export function VocabularyProvider({ children }) {
     dispatch({ type: "DELETE_WORD", payload: id });
   }, []);
 
-  const toggleLearned = useCallback(async (id) => {
-    const currentWord = state.words.find((word) => word.id === id);
-    if (!currentWord) {
-      return;
-    }
+  const toggleLearned = useCallback(
+    async (id) => {
+      const currentWord = state.words.find((word) => word.id === id);
+      if (!currentWord) {
+        return;
+      }
 
-    const updatedWord = await wordApi.updateLearned(id, !currentWord.learned);
-    dispatch({ type: "UPDATE_WORD", payload: updatedWord });
-  }, [state.words]);
+      const updatedWord = await wordApi.updateLearned(id, !currentWord.learned);
+      dispatch({ type: "UPDATE_WORD", payload: updatedWord });
+    },
+    [state.words],
+  );
 
-  const markLearned = useCallback(async (id) => {
-    const currentWord = state.words.find((word) => word.id === id);
-    if (!currentWord || currentWord.learned) {
-      return;
-    }
+  const setLearned = useCallback(
+    async (id, learned) => {
+      if (typeof learned !== "boolean") {
+        throw new Error("learned phai la boolean");
+      }
 
-    const updatedWord = await wordApi.updateLearned(id, true);
-    dispatch({ type: "UPDATE_WORD", payload: updatedWord });
-  }, [state.words]);
+      const currentWord = state.words.find((word) => word.id === id);
+      if (!currentWord || currentWord.learned === learned) {
+        return;
+      }
+
+      const updatedWord = await wordApi.updateLearned(id, learned);
+      dispatch({ type: "UPDATE_WORD", payload: updatedWord });
+    },
+    [state.words],
+  );
 
   const learnedCount = useMemo(
     () => state.words.filter((word) => word.learned).length,
@@ -128,7 +122,7 @@ export function VocabularyProvider({ children }) {
       addWord,
       deleteWord,
       toggleLearned,
-      markLearned,
+      setLearned,
       learnedCount,
       progress,
     }),
@@ -136,7 +130,7 @@ export function VocabularyProvider({ children }) {
       addWord,
       deleteWord,
       toggleLearned,
-      markLearned,
+      setLearned,
       learnedCount,
       progress,
       state.hydrated,
