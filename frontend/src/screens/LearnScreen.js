@@ -393,9 +393,7 @@ export function LearnScreen() {
         >
           <View style={styles.headerWrap}>
             <Text style={styles.headerTitle}>Chọn cấp độ học</Text>
-            <Text style={styles.headerSubtitle}>
-              Khám phá lộ trình học từ vựng tiếng Trung theo tiêu chuẩn quốc tế.
-            </Text>
+            <Text style={styles.headerSubtitle}></Text>
           </View>
 
           {levelSummaries.map((level) => {
