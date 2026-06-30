@@ -114,7 +114,10 @@ export function SearchScreen() {
           : "Đã đánh dấu đã thuộc.",
       );
     } catch (error) {
-      Alert.alert("Lỗi", "Không thể cập nhật trạng thái. Hãy kiểm tra backend.");
+      Alert.alert(
+        "Lỗi",
+        "Không thể cập nhật trạng thái. Hãy kiểm tra backend.",
+      );
     }
   };
 
